@@ -2,6 +2,7 @@
 from sklearn import model_selection
 from sklearn.datasets import load_boston
 from sklearn.model_selection import train_test_split
+# from mini_batch import MiniBatch
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,8 +34,11 @@ class LinearRegression:
     def __init__(self, n_features): # initialises parameters
         self.w = np.random.randn(n_features)
         self.b = np.random.randn()
+
+    def _get_mean_squared_error_loss(self, y_hat, y):
+        return np.mean((y_hat - y) ** 2)
     
-    def fit(self, X, y, epochs=300):
+    def fit(self, X, y, epochs=1000):
         # controls scaling of step-size
         lr = 0.0000000005
         # initialise list of all costs
@@ -69,8 +73,11 @@ class LinearRegression:
         # each W is going to affect the predictions differently, which means they're going to affect the loss differently.
         return grad_w, grad_b
 
-    def _get_mean_squared_error_loss(self, y_hat, y):
-        return np.mean((y_hat - y) ** 2)
+    
+    def scalar_l1_norm(self):
+        return np.linalg.norm(self.w, ord=1)
+
+    # def score(self):
 
 #%%
 def plot_predictions(y_pred, y_true):
@@ -95,8 +102,29 @@ def plot_variance_bias(bias, variance):
     plt.figure()
     plt.ylabel()
 
+def run_model_on_data(model):
+    # 	- fit a linear regression model on the training set
+    params = model.fit(X_train, y_train)
 
+    # 	- score your model on the training set
+    training_score = model.score(X_train, y_train)
+    #         print(f"training_score: {training_score}")
+
+    # 	- score your model on the test set
+    testing_score = model.score(X_test, y_test)
+    #         print(f"testing_score: {testing_score}")
+
+    training_score = model.score(X_train, y_train)
+    #         print(f"training_score: {training_score}")
+
+    validation_score = model.score(X_val, y_val)
+    #         print(f"validation_score: {validation_score}")
+
+    return training_score, testing_score, validation_score
 #%%
 linear_model = LinearRegression(n_features=X.shape[1]) # make predictions on data
 linear_model.fit(X, y)
 pred = linear_model.predict(X)
+# run_model_on_data(linear_model)
+
+# %%
